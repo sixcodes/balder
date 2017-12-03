@@ -1,13 +1,43 @@
 from splinter import Browser
+from db import Book
+from time import sleep
+from threading import Thread
 
-browser = Browser()
-browser.visit('http://google.com')
-browser.fill('q', 'splinter - python acceptance testing for web applications')
-browser.find_by_name('btnG').click()
 
-if browser.is_text_present('splinter.readthedocs.io'):
-    print('Yes, the official website was found!')
-else:
-    print('No, it wasn\'t found... We need to improve our SEO techniques')
+def parse_table_to_dict(table):
+    attrs = [a for a in dir(table) if not a.startswith('__')]
+    print(table.first.value)
 
-browser.quit()
+
+def save_book_data():
+    pass
+
+
+def crawl_acervo_pucpr():
+    with Browser('chrome') as browser:
+        browser.visit('http://www.biblioteca.pucpr.br/pergamum/biblioteca/pesquisa_avancada.php')
+        browser.fill('termo_para_pesquisa1', 'principe')
+        button = browser.find_by_name('pesq')
+
+        button.click()
+
+        sleep(4)
+
+        print('Procurando por links...')
+        links = browser.find_by_css('.link_azul')
+
+        for link in links:
+            if '( Livros )' in link.value:
+                print(link.value)
+                link.click()
+
+                sleep(2)
+
+                parse_table_to_dict(browser.find_by_tag('table'))
+
+                close_link = browser.find_by_id('fechar_2')
+                close_link.click()
+
+
+if __name__ == '__main__':
+    crawl_acervo_pucpr()
