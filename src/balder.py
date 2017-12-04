@@ -79,10 +79,10 @@ def navigate_between_links(browser, links):
             sleep(3)
 
 
-def crawl_pucpr():
+def crawl_pucpr(term):
     with Browser('chrome') as browser:
         browser.visit('http://www.biblioteca.pucpr.br/pergamum/biblioteca/pesquisa_avancada.php')
-        browser.fill('termo_para_pesquisa1', 'principe')
+        browser.fill('termo_para_pesquisa1', term)
         browser.select('n_registros_por_pagina', '50')
 
         button = browser.find_by_name('pesq')
@@ -106,4 +106,11 @@ def crawl_pucpr():
 
 
 if __name__ == '__main__':
-    crawl_pucpr()
+    threads = [Thread(target=crawl_pucpr, args=('laranja',)),
+               Thread(target=crawl_pucpr, args=('principe',)),
+               Thread(target=crawl_pucpr, args=('rouba',)),
+               Thread(target=crawl_pucpr, args=('cabana',)),
+               Thread(target=crawl_pucpr, args=('contos',))]
+
+    for t in threads:
+        t.start()
