@@ -5,13 +5,12 @@ from configs.db import DB_HOST, DB_PORT
 
 class DBClient(object):
 
-    db_client = None
+    __db_client = None
 
-    @classmethod
-    def db_instance(cls, database):
-        if cls.db_client == None:
-            cls.db_client = MongoClient(host=DB_HOST, port=DB_PORT)
-        return cls.db_client[database]
+    def __new__(cls, database):
+        if cls.__db_client == None:
+            cls.__db_client = MongoClient(host=DB_HOST, port=DB_PORT)
+        return cls.__db_client[database]
 
 
 class QueryError(Exception):
@@ -29,16 +28,20 @@ class Model(object):
         instance.__dict__ = kwargs
         return instance
 
+    # def set_all_with_kwargs(self, **kwargs):
+    #     for key, value in kwargs.items():
+    #     setattr(self, key, value)
+
     @classmethod
     def collection_instance(cls):
-        return DBClient.db_instance(cls.database)[cls.collection]
+        return DBClient(cls.database)[cls.collection]
 
     @classmethod
     def set_unique_key(cls, key):
         index_dict = cls.collection_instance().index_information()
 
         if not '{}_1'.format(key) in index_dict:
-            cls.collection.create_index([(key, ASCENDING)], unique=True)
+            cls.collection_instance.create_index([(key, ASCENDING)], unique=True)
 
     def save(self):
         new_doc = self.__dict__
@@ -46,7 +49,6 @@ class Model(object):
             return self.collection_instance().insert_one(new_doc).inserted_id
         except Exception as e:
             raise QueryError()
-            # return print('An error has ocurred! {}'.format(e))
 
     @classmethod
     def get_by(cls, key, value):
@@ -54,7 +56,6 @@ class Model(object):
             return cls.collection_instance().find({key: value})[0]
         except Exception as e:
             raise QueryError()
-            # return print('An error has ocurred! {}'.format(e))
 
     @classmethod
     def get_all(cls):
@@ -62,13 +63,10 @@ class Model(object):
             return cls.collection_instance().find({})
         except Exception as e:
             raise QueryError()
-            # return print('An error has ocurred! {}'.format(e))
 
 
 class BaseField(object):
     pass
-    # def __init__(self,  unique=False):
-    #     pass
 
 
 class StringFiled(BaseField):
@@ -77,7 +75,7 @@ class StringFiled(BaseField):
             return ''
 
         return default_value
-        
+
 
 class NumberFiled(BaseField):
     def __new__(cls, field_name, default_value):
