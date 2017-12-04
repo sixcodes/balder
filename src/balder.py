@@ -92,15 +92,17 @@ def crawl_pucpr():
         sleep(5)
 
         print('Procurando por links...')
-        links = browser.find_by_css('a.link_azul')
-
         page_quantity = int(browser.find_by_css('.txt_acervo2')[-1].value.split('-')[1])
 
         for page in range(page_quantity):
+            links = browser.find_by_css('a.link_azul')
+
             navigate_between_links(browser, links)
 
             next_page = browser.find_by_css('a.pmu_paginacao2')[-1]
             next_page.click()
+
+            sleep(5)
 
 
 if __name__ == '__main__':
