@@ -1,29 +1,24 @@
-import datasource
+from mongoengine import Document, StringField
+from datasource import DBConnection
 
 
-class Book(datasource.Model):
+class Book(Document):
 
-    database = 'balder'
-    collection = 'books'
-
-    name = datasource.StringFiled('title', default_value='')
-    isbn = datasource.StringFiled('isbn', default_value='')
-    call_number = datasource.StringFiled('call_number', default_value='')
-    subject = datasource.StringFiled('subject', default_value='')
-    author = datasource.StringFiled('author', default_value='')
-    main_title = datasource.StringFiled('mainTitle', default_value='')
-    general_notes = datasource.StringFiled('generalNotes', default_value='')
-
-    def __init__(self, *args, **kwargs):
-        self.set_unique_key('isbn')
+    isbn = StringField(default='', unique=True)
+    name = StringField(default='')
+    call_number = StringField(default='')
+    subject = StringField(default='')
+    author = StringField(default='')
+    main_title = StringField(default='')
+    general_notes = StringField(default='')
 
 
 def test_db_connection():
+    DBConnection()
     b = Book(name='Pequeno Teste 4567', isbn='9840283048234',
              author='Teste author', main_title='QUlauqer',
              general_notes='qualquer uma')
     b.save()
-
     # print(Book.get_by(key='isbn', value='8479283479234'))
 
 

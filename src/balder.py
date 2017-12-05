@@ -1,8 +1,12 @@
 from splinter import Browser
 from models import Book
+from datasource import DBConnection
 from time import sleep
 from threading import Thread
 import re
+
+
+DBConnection()
 
 
 def scroll_down(browser):
@@ -37,8 +41,8 @@ def parse_table_to_dict(table, browser):
         if 'Assuntos' in row.value:
             break
 
-    links_list = browser.find_by_text('Fechar (X)')
-    links_list[-1].click()
+    close_modal_button = browser.find_by_text('Close (X)')
+    close_modal_button.click()
 
     scroll_down(browser)
     scroll_down(browser)
@@ -53,8 +57,8 @@ def save_book_data(book_dict):
     try:
         b = Book(**book_dict)
         b.save()
-    except Exception:
-        print('LIVRO NÃO PODE SER SALVO!')
+    except Exception as e:
+        print('LIVRO NÃO PODE SER SALVO! {}'.format(e))
 
 
 def navigate_between_links(browser, links):
@@ -62,24 +66,26 @@ def navigate_between_links(browser, links):
 
     for link in links:
         if '( Livros )' in link.value:
+            window_initial_position += 400
+            browser.execute_script('window.scroll(0, {})'.format(window_initial_position))
+
             print(link.value)
             link.click()
 
-            sleep(2)
+            sleep(6)
 
-            book_dict = parse_table_to_dict(browser.find_by_tag('table'), browser)
+            book_dict = parse_table_to_dict(browser.find_by_css('table'), browser)
 
             if type(book_dict) is dict:
                 print('================== SAVING BOOK ==================')
                 save_book_data(book_dict)
 
-            window_initial_position += 400
-            browser.execute_script('window.scroll(0, {})'.format(window_initial_position))
-
             sleep(3)
 
 
 def crawl_pucpr(term):
+    page_quantity = 50
+
     with Browser('chrome') as browser:
         browser.visit('http://www.biblioteca.pucpr.br/pergamum/biblioteca/pesquisa_avancada.php')
         browser.fill('termo_para_pesquisa1', term)
@@ -92,25 +98,26 @@ def crawl_pucpr(term):
         sleep(5)
 
         print('Procurando por links...')
-        page_quantity = int(browser.find_by_css('.txt_acervo2')[-1].value.split('-')[1])
 
         for page in range(page_quantity):
+            sleep(50)
             links = browser.find_by_css('a.link_azul')
 
             navigate_between_links(browser, links)
 
-            next_page = browser.find_by_css('a.pmu_paginacao2')[-1]
+            next_page = browser.find_by_text('Next »')[0]
             next_page.click()
 
             sleep(5)
 
 
 if __name__ == '__main__':
-    threads = [Thread(target=crawl_pucpr, args=('laranja',)),
-               Thread(target=crawl_pucpr, args=('principe',)),
-               Thread(target=crawl_pucpr, args=('rouba',)),
-               Thread(target=crawl_pucpr, args=('cabana',)),
-               Thread(target=crawl_pucpr, args=('contos',))]
+    crawl_pucpr('principe')
+    # threads = [Thread(target=crawl_pucpr, args=('laranja',)),
+    #            Thread(target=crawl_pucpr, args=('principe',)),
+    #            Thread(target=crawl_pucpr, args=('rouba',)),
+    #            Thread(target=crawl_pucpr, args=('cabana',)),
+    #            Thread(target=crawl_pucpr, args=('contos',))]
 
-    for t in threads:
-        t.start()
+    # for t in threads:
+    #     t.start()
