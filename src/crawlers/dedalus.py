@@ -1,36 +1,55 @@
 from splinter import Browser
 from time import sleep
+from models import Book
 
 
-def parse_table_to_dict(table_element):
-    print(table_element[0])
+def save_book(book_dict):
+    pass
 
 
-def select_first(browser):
+def parse_table_to_dict(browser):
+    table_rows = browser.find_by_css('td.td1')
+    for row in table_rows:
+        print(row.value)
+
+
+def select_first_book(browser):
     first_link = browser.find_by_css('.td1 > a')
     first_link.click()
 
 
+def fill_fields_with_isbn(browser):
+    browser.fill('request', term)
+    browser.select('find_code', 'ISBN')
+
+    search_button = browser.find_by_css('tr > td > input[type=image]').first
+    search_button.click()
+
+
+def enter_and_check_login(browser):
+    browser.visit(
+        'http://dedalus.usp.br/F/75Q3QI5IM28UTXP2NTCEHKXPJAAG2NY6KCE4G7AAMYLRC44QY3-16322'
+    )
+
+    if browser.find_by_css('a.lablebold').first:
+        cancel_button = browser.find_by_css('input[value="Cancel"]').first
+        cancel_button.click()
+
+
 def crawl_dedalus(term):
     with Browser('chrome') as browser:
-        browser.visit(
-            'http://dedalus.usp.br/F/75Q3QI5IM28UTXP2NTCEHKXPJAAG2NY6KCE4G7AAMYLRC44QY3-16322'
-        )
-        browser.fill('request', term)
-        browser.select('find_code', 'ISBN')
+        enter_and_check_login(browser)
+        fill_fields_with_isbn(browser)
 
-        search_button = browser.find_by_css('tr > td > input[type=image]')
-        search_button.click()
         print('Searching for book...')
 
-        sleep(5)
+        sleep(2)
 
-        select_first(browser)
+        select_first_book(browser)
 
-        sleep(5)
+        sleep(2)
 
-        table = browser.find_by_css('table')
-        parse_table_to_dict(table)
+        parse_table_to_dict(browser)
 
 
 if __name__ == '__main__':
