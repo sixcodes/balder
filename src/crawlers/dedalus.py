@@ -1,24 +1,49 @@
-from splinter import Browser
 from time import sleep
+from splinter import Browser
+from splinter.exceptions import ElementDoesNotExist
+
 from models import Book
 
 
 def save_book(book_dict):
-    pass
+    print(book_dict)
+    b = Book(**book_dict)
+    b.save()
 
 
 def parse_table_to_dict(browser):
     table_rows = browser.find_by_css('td.td1')
-    for row in table_rows:
-        print(row.value)
+    book_dict = {
+        'library': 'Dedalus'
+    }
+
+    def parse_field(index, row_name, field, value):
+        row_field = table_rows[index - 1].value
+        if row_name in row_field:
+            print('%s => %s' % (row_field, value))
+            book_dict[field] = str(value)
+
+    for index, row in enumerate(table_rows):
+        if index > 0 and index % 2 is not 0:
+            parse_field(index, 'ISBN', 'isbn', row.value)
+            parse_field(index, 'Título', 'name', row.value)
+            parse_field(index, 'No. Registro', 'call_number', row.value)
+            parse_field(index, 'Entrada Principal', 'author', row.value)
+
+    return book_dict
 
 
 def select_first_book(browser):
-    first_link = browser.find_by_css('.td1 > a')
-    first_link.click()
+    try:
+        first_link = browser.find_by_css('.td1 > a')
+        first_link.click()
+
+        return True
+    except ElementDoesNotExist as e:
+        return False
 
 
-def fill_fields_with_isbn(browser):
+def fill_fields_with_isbn(browser, term):
     browser.fill('request', term)
     browser.select('find_code', 'ISBN')
 
@@ -39,18 +64,18 @@ def enter_and_check_login(browser):
 def crawl_dedalus(term):
     with Browser('chrome') as browser:
         enter_and_check_login(browser)
-        fill_fields_with_isbn(browser)
-
+        fill_fields_with_isbn(browser, term)
         print('Searching for book...')
 
         sleep(2)
 
-        select_first_book(browser)
+        if select_first_book(browser):
+            print('The book was found!')
 
-        sleep(2)
+            sleep(2)
 
-        parse_table_to_dict(browser)
-
-
-if __name__ == '__main__':
-    crawl_dedalus('9788547302177')
+            book_data = parse_table_to_dict(browser)
+            save_book(book_data)
+            print('Book saved!')
+        else:
+            print('The book was not found...')
