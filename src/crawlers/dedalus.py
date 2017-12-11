@@ -4,6 +4,10 @@ from splinter.exceptions import ElementDoesNotExist
 
 from models import Book
 
+__all__ = (
+    'crawl_dedalus',
+)
+
 
 def save_book(book_dict):
     print(book_dict)

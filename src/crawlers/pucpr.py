@@ -5,8 +5,9 @@ from time import sleep
 from threading import Thread
 import re
 
-
-DBConnection()
+__all__ = (
+    'crawl_pucpr',
+)
 
 
 def scroll_down(browser):
@@ -83,17 +84,21 @@ def navigate_between_links(browser, links):
             sleep(3)
 
 
+def fill_search_bar(browser, term):
+    browser.visit('http://www.biblioteca.pucpr.br/pergamum/biblioteca/pesquisa_avancada.php')
+    browser.fill('termo_para_pesquisa1', term)
+    browser.select('n_registros_por_pagina', '50')
+
+    button = browser.find_by_name('pesq')
+
+    button.click()
+
+
 def crawl_pucpr(term):
     page_quantity = 50
 
     with Browser('chrome') as browser:
-        browser.visit('http://www.biblioteca.pucpr.br/pergamum/biblioteca/pesquisa_avancada.php')
-        browser.fill('termo_para_pesquisa1', term)
-        browser.select('n_registros_por_pagina', '50')
-
-        button = browser.find_by_name('pesq')
-
-        button.click()
+        fill_search_bar(browser, term)
 
         sleep(5)
 
@@ -109,15 +114,3 @@ def crawl_pucpr(term):
             next_page.click()
 
             sleep(5)
-
-
-if __name__ == '__main__':
-    crawl_pucpr('principe')
-    # threads = [Thread(target=crawl_pucpr, args=('laranja',)),
-    #            Thread(target=crawl_pucpr, args=('principe',)),
-    #            Thread(target=crawl_pucpr, args=('rouba',)),
-    #            Thread(target=crawl_pucpr, args=('cabana',)),
-    #            Thread(target=crawl_pucpr, args=('contos',))]
-
-    # for t in threads:
-    #     t.start()
