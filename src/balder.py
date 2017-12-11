@@ -10,7 +10,7 @@ if __name__ == '__main__':
     isbn = '9788547302177'
 
     threads = [
-        Thread(target=crawl_dedalus, args=(isbn,)),
+        # Thread(target=crawl_dedalus, args=(isbn,)),
         Thread(target=crawl_sophia, args=(isbn,))
     ]
 

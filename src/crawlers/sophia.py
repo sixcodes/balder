@@ -8,20 +8,35 @@ __all__ = (
 )
 
 
-def crawl_one(browser, term):
-    browser.fill('rapida_campo', term)
-    search_button = browser.find_by_css('.button_busca')[0]
-    search_button.click()
-    sleep(3)
+def find_by_isbn(driver, isbn):
+    search_field = driver.find_element_by_css_selector('.input_busca')
+    search_field.send_keys(isbn)
 
-    browser.find_by_css('input.input_busca')
+    driver.find_elements_by_css_selector(
+        'button.ui-multiselect.ui-widget.ui-state-default.ui-corner-all'
+    )[2].click()
+
+    driver.find_element_by_css_selector(
+        'label[for="ui-multiselect-rapida_filtro-option-5"]'
+    ).click()
+
+    sleep(5)
 
 
-def crawl_list(browser, term):
-    pass
+def find_iframe(driver):
+    iframe = driver.find_element_by_id('mainFrame')
+    driver.switch_to_frame(iframe)
 
 
 def crawl_sophia(term):
-    with Browser('chrome') as browser:
-        browser.visit('http://acervo.bn.br/sophia_web/index.html')
-        crawl_one(browser, term)
+    driver = webdriver.Chrome()
+
+    try:
+        driver.get('http://acervo.bn.br/sophia_web/index.html')
+        find_iframe(driver)
+        find_by_isbn(driver, term)
+
+        driver.close()
+    except Exception as e:
+        print(e)
+        driver.close()
