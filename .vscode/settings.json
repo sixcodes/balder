@@ -1,4 +1,11 @@
 {
   "python.pythonPath": "~/.virtualenvs/balder_env/bin/python",
-  "python.linting.pylintEnabled": false
+  "python.linting.pylintEnabled": false,
+  "python.linting.pylintArgs": ["--load-plugins=pylint_django"],
+
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/data": true
+  }
 }

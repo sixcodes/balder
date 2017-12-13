@@ -1,0 +1,83 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Book	../src/crawlers/dedalus.py	/^from models import Book$/;"	kind:namespace	line:5
+Book	../src/crawlers/pucpr.py	/^from models import Book$/;"	kind:namespace	line:2
+Book	../src/models.py	/^class Book(Document):$/;"	kind:class	line:5
+Browser	../src/crawlers/dedalus.py	/^from splinter import Browser$/;"	kind:namespace	line:2
+Browser	../src/crawlers/pucpr.py	/^from splinter import Browser$/;"	kind:namespace	line:1
+Browser	../src/crawlers/sophia.py	/^from splinter import Browser$/;"	kind:namespace	line:1
+DBConnection	../src/balder.py	/^from datasource import DBConnection$/;"	kind:namespace	line:4
+DBConnection	../src/crawlers/pucpr.py	/^from datasource import DBConnection$/;"	kind:namespace	line:3
+DBConnection	../src/datasource.py	/^class DBConnection(object):$/;"	kind:class	line:5
+DBConnection	../src/models.py	/^from datasource import DBConnection$/;"	kind:namespace	line:2
+DB_HOST	../src/configs/db.py	/^DB_HOST = 'localhost'$/;"	kind:variable	line:3
+DB_HOST	../src/datasource.py	/^from configs.db import DB_HOST, DB_PORT, DB_NAME$/;"	kind:namespace	line:2
+DB_NAME	../src/configs/db.py	/^DB_NAME = 'balder'$/;"	kind:variable	line:2
+DB_NAME	../src/datasource.py	/^from configs.db import DB_HOST, DB_PORT, DB_NAME$/;"	kind:namespace	line:2
+DB_PORT	../src/configs/db.py	/^DB_PORT = 27017$/;"	kind:variable	line:4
+DB_PORT	../src/datasource.py	/^from configs.db import DB_HOST, DB_PORT, DB_NAME$/;"	kind:namespace	line:2
+Document	../src/models.py	/^from mongoengine import Document, StringField$/;"	kind:namespace	line:1
+ElementDoesNotExist	../src/crawlers/dedalus.py	/^from splinter.exceptions import ElementDoesNotExist$/;"	kind:namespace	line:3
+NoBookFoundError	../src/errors.py	/^class NoBookFoundError(Exception):$/;"	kind:class	line:2
+StringField	../src/models.py	/^from mongoengine import Document, StringField$/;"	kind:namespace	line:1
+Thread	../src/balder.py	/^from threading import Thread$/;"	kind:namespace	line:1
+Thread	../src/crawlers/pucpr.py	/^from threading import Thread$/;"	kind:namespace	line:5
+__all__	../src/crawlers/dedalus.py	/^__all__ = ($/;"	kind:variable	line:7
+__all__	../src/crawlers/pucpr.py	/^__all__ = ($/;"	kind:variable	line:8
+__all__	../src/crawlers/sophia.py	/^__all__ = ($/;"	kind:variable	line:5
+__init__.py	../src/__init__.py	1;"	kind:file	line:1
+__init__.py	../src/configs/__init__.py	1;"	kind:file	line:1
+__init__.py	../src/crawlers/__init__.py	1;"	kind:file	line:1
+__new__	../src/datasource.py	/^    def __new__(cls):$/;"	kind:member	line:9
+author	../src/models.py	/^    author = StringField(default=None)$/;"	kind:variable	line:11
+balder.py	../src/balder.py	1;"	kind:file	line:1
+call_number	../src/models.py	/^    call_number = StringField(default=None)$/;"	kind:variable	line:9
+connection	../src/datasource.py	/^    connection = None$/;"	kind:variable	line:7
+crawl_dedalus	../src/balder.py	/^from crawlers import crawl_sophia, crawl_dedalus$/;"	kind:namespace	line:3
+crawl_dedalus	../src/crawlers/__init__.py	/^from .dedalus import crawl_dedalus$/;"	kind:namespace	line:1
+crawl_dedalus	../src/crawlers/dedalus.py	/^def crawl_dedalus(term):$/;"	kind:function	line:68
+crawl_pucpr	../src/crawlers/__init__.py	/^from .pucpr import crawl_pucpr$/;"	kind:namespace	line:2
+crawl_pucpr	../src/crawlers/pucpr.py	/^def crawl_pucpr(term):$/;"	kind:function	line:97
+crawl_sophia	../src/balder.py	/^from crawlers import crawl_sophia, crawl_dedalus$/;"	kind:namespace	line:3
+crawl_sophia	../src/crawlers/__init__.py	/^from .sophia import crawl_sophia$/;"	kind:namespace	line:3
+crawl_sophia	../src/crawlers/sophia.py	/^def crawl_sophia(term):$/;"	kind:function	line:49
+datasource.py	../src/datasource.py	1;"	kind:file	line:1
+db.py	../src/configs/db.py	1;"	kind:file	line:1
+dedalus.py	../src/crawlers/dedalus.py	1;"	kind:file	line:1
+enter_and_check_login	../src/crawlers/dedalus.py	/^def enter_and_check_login(browser):$/;"	kind:function	line:58
+errors.py	../src/errors.py	1;"	kind:file	line:1
+fill_fields_with_isbn	../src/crawlers/dedalus.py	/^def fill_fields_with_isbn(browser, term):$/;"	kind:function	line:50
+fill_search_bar	../src/crawlers/pucpr.py	/^def fill_search_bar(browser, term):$/;"	kind:function	line:87
+find_by_isbn	../src/crawlers/sophia.py	/^def find_by_isbn(driver, isbn):$/;"	kind:function	line:25
+find_iframe	../src/crawlers/sophia.py	/^def find_iframe(driver):$/;"	kind:function	line:44
+general_notes	../src/models.py	/^    general_notes = StringField(default=None)$/;"	kind:variable	line:13
+isbn	../src/balder.py	/^    isbn = '9788535911121'$/;"	kind:variable	line:11
+isbn	../src/models.py	/^    isbn = StringField(default='', unique=True)$/;"	kind:variable	line:7
+key_condition	../src/crawlers/pucpr.py	/^    def key_condition(string, row, key):$/;"	kind:function	line:21
+library	../src/models.py	/^    library = StringField(default=None)$/;"	kind:variable	line:14
+main_title	../src/models.py	/^    main_title = StringField(default=None)$/;"	kind:variable	line:12
+models.py	../src/models.py	1;"	kind:file	line:1
+mongoengine	../src/datasource.py	/^import mongoengine$/;"	kind:namespace	line:1
+name	../src/models.py	/^    name = StringField(default='')$/;"	kind:variable	line:8
+navigate_between_links	../src/crawlers/pucpr.py	/^def navigate_between_links(browser, links):$/;"	kind:function	line:65
+parse_field	../src/crawlers/dedalus.py	/^    def parse_field(index, row_name, field, value):$/;"	kind:function	line:24
+parse_table_to_dict	../src/crawlers/dedalus.py	/^def parse_table_to_dict(browser):$/;"	kind:function	line:18
+parse_table_to_dict	../src/crawlers/pucpr.py	/^def parse_table_to_dict(table, browser):$/;"	kind:function	line:17
+pucpr.py	../src/crawlers/pucpr.py	1;"	kind:file	line:1
+re	../src/crawlers/pucpr.py	/^import re$/;"	kind:namespace	line:6
+save_book	../src/crawlers/dedalus.py	/^def save_book(book_dict):$/;"	kind:function	line:12
+save_book_data	../src/crawlers/pucpr.py	/^def save_book_data(book_dict):$/;"	kind:function	line:57
+scroll_down	../src/crawlers/pucpr.py	/^def scroll_down(browser):$/;"	kind:function	line:13
+select_first_book	../src/crawlers/dedalus.py	/^def select_first_book(browser):$/;"	kind:function	line:40
+sleep	../src/crawlers/dedalus.py	/^from time import sleep$/;"	kind:namespace	line:1
+sleep	../src/crawlers/pucpr.py	/^from time import sleep$/;"	kind:namespace	line:4
+sleep	../src/crawlers/sophia.py	/^from time import sleep$/;"	kind:namespace	line:3
+sophia.py	../src/crawlers/sophia.py	1;"	kind:file	line:1
+subject	../src/models.py	/^    subject = StringField(default=None)$/;"	kind:variable	line:10
+take_book_on_list	../src/crawlers/sophia.py	/^def take_book_on_list(driver):$/;"	kind:function	line:10
+threads	../src/balder.py	/^    threads = [$/;"	kind:variable	line:14
+webdriver	../src/crawlers/sophia.py	/^from selenium import webdriver$/;"	kind:namespace	line:2

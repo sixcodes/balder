@@ -7,7 +7,7 @@ class DBConnection(object):
     connection = None
 
     def __new__(cls):
-        if cls.connection == None:
+        if cls.connection is None:
             cls.connection = mongoengine.connect(
                 db=DB_NAME, host=DB_HOST, port=DB_PORT
             )

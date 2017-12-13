@@ -10,7 +10,6 @@ __all__ = (
 
 
 def save_book(book_dict):
-    print(book_dict)
     b = Book(**book_dict)
     b.save()
 
@@ -24,15 +23,15 @@ def parse_table_to_dict(browser):
     def parse_field(index, row_name, field, value):
         row_field = table_rows[index - 1].value
         if row_name in row_field:
-            print('%s => %s' % (row_field, value))
             book_dict[field] = str(value)
 
     for index, row in enumerate(table_rows):
         if index > 0 and index % 2 is not 0:
             parse_field(index, 'ISBN', 'isbn', row.value)
             parse_field(index, 'Título', 'name', row.value)
-            parse_field(index, 'No. Registro', 'call_number', row.value)
             parse_field(index, 'Entrada Principal', 'author', row.value)
+            parse_field(index, 'Imprenta', 'place', row.value)
+            parse_field(index, 'Imprenta', 'year', row.value)
 
     return book_dict
 
@@ -43,7 +42,7 @@ def select_first_book(browser):
         first_link.click()
 
         return True
-    except ElementDoesNotExist as e:
+    except ElementDoesNotExist as err:
         return False
 
 
@@ -66,20 +65,26 @@ def enter_and_check_login(browser):
 
 
 def crawl_dedalus(term):
-    with Browser('chrome') as browser:
+    crawler_name = 'Dedalus Crawler'
+    with Browser('chrome', headless=True) as browser:
+        print('{}: Checking logind page'.format(crawler_name))
         enter_and_check_login(browser)
+        print('{}: finding isbn...'.format(crawler_name))
         fill_fields_with_isbn(browser, term)
-        print('Searching for book...')
+        print('{}: Searching for book...'.format(crawler_name))
 
         sleep(2)
 
         if select_first_book(browser):
-            print('The book was found!')
+            print('{}: The book was found!'.format(crawler_name))
 
             sleep(2)
 
+            print('{}: Parsing book data'.format(crawler_name))
             book_data = parse_table_to_dict(browser)
+            print('{}: Saving book data'.format(crawler_name))
+            print('{}: {}'.format(crawler_name, book_data))
             save_book(book_data)
-            print('Book saved!')
+            print('{}: Book saved!'.format(crawler_name))
         else:
-            print('The book was not found...')
+            print('{}: The book was not found...'.format(crawler_name))
