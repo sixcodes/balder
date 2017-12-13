@@ -66,7 +66,7 @@ def enter_and_check_login(browser):
 
 def crawl_dedalus(term):
     crawler_name = 'Dedalus Crawler'
-    with Browser('chrome') as browser:
+    with Browser('chrome', headless=True) as browser:
         print('{}: Checking logind page'.format(crawler_name))
         enter_and_check_login(browser)
         print('{}: finding isbn...'.format(crawler_name))
