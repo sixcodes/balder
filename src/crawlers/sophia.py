@@ -80,7 +80,7 @@ def find_iframe(driver):
 
 def crawl_sophia(term):
     chrome_options = Options()
-    chrome_options.add_argument("--headless")
+
     driver = webdriver.Chrome(chrome_options=chrome_options)
 
     try:
