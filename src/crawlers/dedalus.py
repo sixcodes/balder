@@ -2,6 +2,7 @@ from time import sleep
 
 from splinter import Browser
 from splinter.exceptions import ElementDoesNotExist
+from mongoengine.errors import NotUniqueError
 from models import Book
 
 __all__ = (
@@ -82,7 +83,12 @@ def crawl_dedalus(term):
             book_data = parse_table_to_dict(browser)
             print('%s: Saving book data' % crawler_name)
             print('%s: %s' % (crawler_name, book_data))
-            save_book(book_data)
-            print('%s: Book saved!' % crawler_name)
+            
+            try:
+                save_book(book_data)
+                print('%s: Book saved!' % crawler_name)
+            except NotUniqueError:
+                print('%s: Book already saved!' % crawler_name)
+                
         else:
             print('%s: The book was not found...' % crawler_name)
