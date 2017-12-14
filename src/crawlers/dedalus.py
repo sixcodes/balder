@@ -67,24 +67,24 @@ def enter_and_check_login(browser):
 def crawl_dedalus(term):
     crawler_name = 'Dedalus Crawler'
     with Browser('chrome', headless=True) as browser:
-        print('{}: Checking logind page'.format(crawler_name))
+        print('%s: Checking logind page' % crawler_name)
         enter_and_check_login(browser)
-        print('{}: finding isbn...'.format(crawler_name))
+        print('%s: finding isbn...' % crawler_name)
         fill_fields_with_isbn(browser, term)
-        print('{}: Searching for book...'.format(crawler_name))
+        print('%s: Searching for book...' % crawler_name)
 
         sleep(2)
 
         if select_first_book(browser):
-            print('{}: The book was found!'.format(crawler_name))
+            print('%s: The book was found!' % crawler_name)
 
             sleep(2)
 
-            print('{}: Parsing book data'.format(crawler_name))
+            print('%s: Parsing book data' % crawler_name)
             book_data = parse_table_to_dict(browser)
-            print('{}: Saving book data'.format(crawler_name))
-            print('{}: {}'.format(crawler_name, book_data))
+            print('%s: Saving book data' % crawler_name)
+            print('%s: %s' % (crawler_name, book_data))
             save_book(book_data)
-            print('{}: Book saved!'.format(crawler_name))
+            print('%s: Book saved!' % crawler_name)
         else:
-            print('{}: The book was not found...'.format(crawler_name))
+            print('%s: The book was not found...' % crawler_name)

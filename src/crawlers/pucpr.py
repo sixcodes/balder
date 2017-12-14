@@ -11,6 +11,14 @@ __all__ = (
 )
 
 
+def save_book_data(book_dict):
+    try:
+        b = Book(**book_dict)
+        b.save()
+    except Exception as e:
+        print('Book cannot be saved! {}'.format(e))
+
+
 def scroll_down(browser):
     browser.execute_script("window.scrollTo(0, -document.body.scrollHeight);")
 
@@ -22,7 +30,8 @@ def parse_table_to_dict(table, browser):
     def key_condition(string, row, key):
         if string in row.value:
             if key == 'isbn':
-                book_dict[key] = re.search('((\d+-)+\d)', row.value.split('\n')[1]).group(0)
+                book_dict[key] = re.search(
+                    '((\d+-)+\d)', row.value.split('\n')[1]).group(0).replace('-', '')
             else:
                 book_dict[key] = row.value.split('\n')[1]
 
@@ -39,11 +48,7 @@ def parse_table_to_dict(table, browser):
         if 'Assuntos' in row.value:
             break
 
-    close_modal_button = browser.find_by_text('Close (X)')
-    close_modal_button.click()
-
-    scroll_down(browser)
-    scroll_down(browser)
+    book_dict['library'] = 'Pucpr'
 
     if have_isbn:
         return book_dict
@@ -51,28 +56,55 @@ def parse_table_to_dict(table, browser):
     return False
 
 
-def save_book_data(book_dict):
-    try:
-        b = Book(**book_dict)
-        b.save()
-    except Exception as e:
-        print('LIVRO NÃO PODE SER SALVO! {}'.format(e))
+def get_table(browser):
+    return browser.find_by_css('table[width="95%"]')
+
+
+def clicking_on_first_link(browser):
+    link_tags = browser.find_by_css('tr[align="left"] > td > a.link_azul')
+
+    if len(link_tags) != 0:
+        link_tags[0].click()
+    else:
+        raise NoBookFoundError
 
 
 def fill_search_bar(browser, term):
-    browser.visit('http://www.biblioteca.pucpr.br/pergamum/biblioteca/pesquisa_avancada.php')
     browser.fill('termo_para_pesquisa1', term)
-    select_field = browser.find_by_css('select.pmu_campo4')[0]
+    # clicking on select and search button
+    browser.find_by_css('select#filtro1.pmu_campo4')[0].click()
+    browser.find_by_css('option[value="LIVRE"]')[0].click()
 
-    browser.select('n_registros_por_pagina', '50')
-
-    button = browser.find_by_name('pesq')
-
-    button.click()
+    browser.find_by_css('input#fs.pmu_btn11')[0].click()
 
 
 def crawl_pucpr(term):
     page_quantity = 50
+    crawler_name = 'Pucpr crawler'
 
     with Browser('chrome') as browser:
+        browser.visit('http://www.biblioteca.pucpr.br/pergamum/biblioteca/pesquisa_avancada.php')
+
+        print('%s: Searching by isbn' % crawler_name)
         fill_search_bar(browser, term)
+
+        try:
+            clicking_on_first_link(browser)
+            print('%s: The book was found!' % crawler_name)
+            print('%s: Getting book from table' % crawler_name)
+            table = get_table(browser)
+            print('%s: Parsing book data' % crawler_name)
+            book = parse_table_to_dict(table, browser)
+            print(book)
+
+            print('%s: Saving book data' % crawler_name)
+            save_book_data(book)
+
+            print('%s: Book was saved!' % crawler_name)
+
+        except NoBookFoundError as error:
+            print('%s: No book found...' % crawler_name)
+
+        except Exception as error:
+            print(error)
+            print('An error has occured...')

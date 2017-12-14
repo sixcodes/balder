@@ -7,7 +7,7 @@ from datasource import DBConnection
 if __name__ == '__main__':
     DBConnection()
 
-    isbn = '978-85-359-1112-1'
+    isbn_pucpr = '978-85-359-1112-1'
     isbn_sophia = '9788535911121'
     isbn_dedalus = '9788547302177'
 

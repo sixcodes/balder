@@ -24,7 +24,11 @@ def extract_book_data_as_dict(driver):
 
     def parse_field(index, row_name, field):
         if row_name in book_fields[index - 1].text:
-            book_dict[field] = book_data[index].text
+            if field is 'isbn':
+                book_dict[field] = book_data[index - 1].text \
+                    .replace('.', '').replace(' ', '').replace('(broch)', '')
+            else:
+                book_dict[field] = book_data[index - 1].text
 
     for key, field in enumerate(book_fields):
         parse_field(key, 'ISBN', 'isbn')
@@ -79,30 +83,31 @@ def find_iframe(driver):
 
 
 def crawl_sophia(term):
+    crawler_name = 'Sophia Crawler'
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     driver = webdriver.Chrome(chrome_options=chrome_options)
 
     try:
         driver.get('http://acervo.bn.br/sophia_web/index.html')
-        print('Sophia Crawler: Finding iframe...')
+        print('%s: Finding iframe...' % crawler_name)
         find_iframe(driver)
-        print('Sophia Crawler: Searching book by isbn...')
+        print('%s: Searching book by isbn...' % crawler_name)
         find_by_isbn(driver, term)
-        print('Sophia Crawler: Taking the first book of the list')
+        print('%s: Taking the first book of the list' % crawler_name)
         take_book_on_list(driver)
-        print('Sophia Crawler: Extracting book data...')
+        print('%s: Extracting book data...' % crawler_name)
         book_dict = extract_book_data_as_dict(driver)
 
-        print('Sophia Crawler: Saving book...')
+        print('%s: Saving book...' % crawler_name)
         save_book(book_dict)
 
-        print('Sophia Crawler: Book was saved!')
+        print('%s: Book was saved!' % crawler_name)
 
         driver.close()
 
     except NoBookFoundError as e:
-        print('Sophia Crawler: No book found!')
+        print('%s: No book found!' % crawler_name)
 
     except Exception as e:
         print(e)
