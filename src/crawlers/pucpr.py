@@ -3,6 +3,7 @@ from models import Book
 from datasource import DBConnection
 from time import sleep
 from threading import Thread
+from errors import NoBookFoundError
 import re
 
 __all__ = (
@@ -31,13 +32,9 @@ def parse_table_to_dict(table, browser):
 
         row_data = row.value.split('\n')
 
-        key_condition('Autor', row, 'author')
-        key_condition('Título Principal', row, 'main_title')
-        key_condition('Título Uniforme', row, 'title')
-        key_condition('Número de Chamada', row, 'call_number')
         key_condition('Número Normalizado', row, 'isbn')
-        key_condition('Notas Gerais', row, 'general_notes')
-        key_condition('Assuntos', row, 'subject')
+        key_condition('Título Principal', row, 'name')
+        key_condition('Autor', row, 'author')
 
         if 'Assuntos' in row.value:
             break
@@ -62,31 +59,11 @@ def save_book_data(book_dict):
         print('LIVRO NÃO PODE SER SALVO! {}'.format(e))
 
 
-def navigate_between_links(browser, links):
-    window_initial_position = 0
-
-    for link in links:
-        if '( Livros )' in link.value:
-            window_initial_position += 400
-            browser.execute_script('window.scroll(0, {})'.format(window_initial_position))
-
-            print(link.value)
-            link.click()
-
-            sleep(6)
-
-            book_dict = parse_table_to_dict(browser.find_by_css('table'), browser)
-
-            if type(book_dict) is dict:
-                print('================== SAVING BOOK ==================')
-                save_book_data(book_dict)
-
-            sleep(3)
-
-
 def fill_search_bar(browser, term):
     browser.visit('http://www.biblioteca.pucpr.br/pergamum/biblioteca/pesquisa_avancada.php')
     browser.fill('termo_para_pesquisa1', term)
+    select_field = browser.find_by_css('select.pmu_campo4')[0]
+
     browser.select('n_registros_por_pagina', '50')
 
     button = browser.find_by_name('pesq')
@@ -99,18 +76,3 @@ def crawl_pucpr(term):
 
     with Browser('chrome') as browser:
         fill_search_bar(browser, term)
-
-        sleep(5)
-
-        print('Procurando por links...')
-
-        for page in range(page_quantity):
-            sleep(50)
-            links = browser.find_by_css('a.link_azul')
-
-            navigate_between_links(browser, links)
-
-            next_page = browser.find_by_text('Next »')[0]
-            next_page.click()
-
-            sleep(5)
