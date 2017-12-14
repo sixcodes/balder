@@ -81,8 +81,9 @@ def crawl_pucpr(term):
     page_quantity = 50
     crawler_name = 'Pucpr crawler'
 
-    with Browser('chrome') as browser:
+    with Browser('chrome', headless=True) as browser:
         browser.visit('http://www.biblioteca.pucpr.br/pergamum/biblioteca/pesquisa_avancada.php')
+        browser.driver.set_window_size(800, 600)
 
         print('%s: Searching by isbn' % crawler_name)
         fill_search_bar(browser, term)
