@@ -1,7 +1,7 @@
 from time import sleep
+
 from splinter import Browser
 from splinter.exceptions import ElementDoesNotExist
-
 from models import Book
 
 __all__ = (
@@ -16,9 +16,7 @@ def save_book(book_dict):
 
 def parse_table_to_dict(browser):
     table_rows = browser.find_by_css('td.td1')
-    book_dict = {
-        'library': 'Dedalus'
-    }
+    book_dict = {'library': 'Dedalus'}
 
     def parse_field(index, row_name, field, value):
         row_field = table_rows[index - 1].value

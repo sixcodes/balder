@@ -1,8 +1,7 @@
-from splinter import Browser
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from time import sleep
 
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 from errors import NoBookFoundError
 from models import Book
@@ -20,7 +19,7 @@ def save_book(book):
 def extract_book_data_as_dict(driver):
     book_fields = driver.find_elements_by_css_selector('td.td_detalhe_descricao')
     book_data = driver.find_elements_by_css_selector('td.td_detalhe_valor')
-    book_dict = {}
+    book_dict = {'library': 'sophia'}
 
     def parse_field(index, row_name, field):
         if row_name in book_fields[index - 1].text:
@@ -38,7 +37,6 @@ def extract_book_data_as_dict(driver):
         parse_field(key, 'Imprenta', 'year')
         parse_field(key, 'Edição', 'publisher')
 
-    book_dict['library'] = 'sophia'
     print(book_dict)
 
     return book_dict
@@ -108,6 +106,7 @@ def crawl_sophia(term):
 
     except NoBookFoundError as e:
         print('%s: No book found!' % crawler_name)
+        driver.close()
 
     except Exception as e:
         print(e)

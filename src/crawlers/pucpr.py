@@ -1,10 +1,11 @@
+import re
+from time import sleep
+from threading import Thread
+
 from splinter import Browser
 from models import Book
 from datasource import DBConnection
-from time import sleep
-from threading import Thread
 from errors import NoBookFoundError
-import re
 
 __all__ = (
     'crawl_pucpr',
@@ -25,7 +26,7 @@ def scroll_down(browser):
 
 def parse_table_to_dict(table, browser):
     have_isbn = False
-    book_dict = {}
+    book_dict = {'library': 'Pucpr'}
 
     def key_condition(string, row, key):
         if string in row.value:
@@ -47,8 +48,6 @@ def parse_table_to_dict(table, browser):
 
         if 'Assuntos' in row.value:
             break
-
-    book_dict['library'] = 'Pucpr'
 
     if have_isbn:
         return book_dict
