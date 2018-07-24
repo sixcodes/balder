@@ -1,5 +1,5 @@
 {
-  "python.pythonPath": "~/.virtualenvs/balder_env/bin/python",
+  "python.pythonPath": "~/.virtualenvs/balder/bin/python",
   "python.linting.pylintEnabled": false,
   "python.linting.pylintArgs": ["--load-plugins=pylint_django"],
 

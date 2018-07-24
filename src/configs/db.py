@@ -1,4 +1,0 @@
-# DB_HOST = 'balder_database_1'
-DB_NAME = 'balder'
-DB_HOST = 'localhost'
-DB_PORT = 27017

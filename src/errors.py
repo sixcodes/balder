@@ -1,3 +1,0 @@
-
-class NoBookFoundError(Exception):
-    pass
