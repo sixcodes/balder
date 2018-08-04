@@ -1,10 +1,27 @@
-import aiohttp
-import asyncio
-from utils import fetch
-from schema import book_schema
 
-BASE_URL = 'https://www.googleapis.com/books/v1/volumes?q=isbn:{}'
-ISBN = '9788584390670'
+def book_schema(plain_data):
+    book = {}
+    book['isbn'] = plain_data['volumeInfo']['industryIdentifiers'][1]['identifier']
+    book['title'] = plain_data['volumeInfo']['title']
+    book['authors'] = plain_data['volumeInfo']['authors']
+
+    if 'description' in plain_data['volumeInfo']:
+        book['description'] = plain_data['volumeInfo']['description']
+
+    if 'published' in plain_data['volumeInfo']:
+        book['published'] = plain_data['volumeInfo']['publishedDate']
+
+    book['publisher'] = plain_data['volumeInfo']['publisher']
+    book['country'] = plain_data['accessInfo']['country']
+
+    return book
+
+
+async def fetch(session, url):
+    async with session.get(url) as response:
+        status = response.status
+        json = await response.json()
+        return json, status
 
 
 async def fetch_book_found(http_session, url):
@@ -25,15 +42,3 @@ async def book_worker(aiohttp, url, isbn):
             return book_data
         else:
             return {'error': 'Livro não encontrado'}
-
-
-async def main():
-    book_data = await book_worker(aiohttp, BASE_URL, ISBN)
-    if 'error' not in book_data:
-        print(book_data)
-    else:
-        print(book_data['error'])
-
-if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())

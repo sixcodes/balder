@@ -1,12 +1,12 @@
 version: '3'
 
 services:
-  database:
-    image: mongo:3.0.15-wheezy
+  mongo:
+    image: mongo:3.4
     ports:
-      - 27017:27017
+      - "27017:27017"
     volumes:
-      - ./data/db:/data/db
+      - ./mongo_data:/data/db
 
   crawler:
     build: .
