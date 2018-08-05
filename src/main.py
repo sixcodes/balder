@@ -12,7 +12,7 @@ results = {
 
 
 async def split_in_files():
-    book_file = await get_isbn_list_from_file('src/isbn_list.txt')
+    book_file = await get_isbn_list_from_file('isbn_list.txt')
     return book_file.splitlines()
 
 
