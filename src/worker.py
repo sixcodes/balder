@@ -1,3 +1,5 @@
+import aiohttp
+
 
 def book_schema(plain_data):
     book = {}
@@ -34,7 +36,7 @@ async def search_for_isbn(http_session, url, isbn):
     return data['items'][0] if data['totalItems'] > 0 else False
 
 
-async def book_worker(aiohttp, url, isbn):
+async def book_worker(url, isbn, aiohttp=aiohttp):
     async with aiohttp.ClientSession() as session:
         response = await search_for_isbn(session, url, isbn)
         if response:

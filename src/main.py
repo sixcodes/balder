@@ -1,24 +1,42 @@
 import asyncio
+import json
 from worker import book_worker
 from file_reader import get_isbn_list_from_file
 
 BASE_URL = 'https://www.googleapis.com/books/v1/volumes?q=isbn:{}'
 
+results = {
+    'donwnloaded': [],
+    'not_founds': [],
+}
 
-async def main(loop):
+
+async def split_in_files():
     book_file = await get_isbn_list_from_file('src/isbn_list.txt')
-    book_list = book_file.splitlines()
+    return book_file.splitlines()
 
-    tasks = asyncio.gather()
 
-    for book in books:
-        if 'error' not in book:
-            print(book['title'])
-        else:
-            print(book['error'])
+async def get_download_results(isbn, results):
+    book = await book_worker(BASE_URL, isbn)
+    if 'error' not in book:
+        results['downloaded'].append(book)
+        print(book['title'])
+    else:
+        results['not_founds'].append(isbn)
+        print(book['error'])
+
+
+async def main():
+    isbn_list = await split_in_files()
+    return asyncio.gather(
+        *[get_download_results(isbn, results) for isbn in isbn_list]
+    )
 
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main(loop))
-    loop.run_until_complete(loop.shutdown_asyncgens())
+    loop.run_until_complete(main())
+
+    result_string = json.dumps(results)
+    with open('results.json', 'x') as f:
+        f.write(result_string)
