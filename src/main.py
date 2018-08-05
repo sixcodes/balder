@@ -16,7 +16,8 @@ async def split_in_files():
     return book_file.splitlines()
 
 
-async def get_download_results(isbn, results):
+async def get_download_results(isbn, results, index):
+    print('start downloading {} number {}'.format(isbn, index))
     book = await book_worker(BASE_URL, isbn)
     if 'error' not in book:
         results['downloaded'].append(book)
@@ -28,8 +29,14 @@ async def get_download_results(isbn, results):
 
 async def main():
     isbn_list = await split_in_files()
+
+    for isbn in isbn_list:
+        print(isbn)
+
+    print('total of books {}'.format(len(isbn_list)))
+
     return asyncio.gather(
-        *[get_download_results(isbn, results) for isbn in isbn_list]
+        *[get_download_results(isbn, results, index) for index, isbn in enumerate(isbn_list)]
     )
 
 
