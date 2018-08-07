@@ -36,11 +36,11 @@ async def search_for_isbn(http_session, url, isbn):
     return data['items'][0] if status == 200 and data['totalItems'] > 0 else False
 
 
-async def book_worker(url, isbn, aiohttp=aiohttp):
+async def fetch_book(url, isbn, aiohttp=aiohttp):
     async with aiohttp.ClientSession() as session:
         response = await search_for_isbn(session, url, isbn)
         if response:
             book_data = await fetch_book_found(session, response['selfLink'])
             return book_data
         else:
-            return {'error': 'Livro não encontrado'}
+            return {'error': 'Livro {} não encontrado'.format(isbn)}

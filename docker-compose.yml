@@ -8,12 +8,12 @@ services:
     volumes:
       - ./mongo_data:/data/db
 
-  crawler:
-    build: .
-    volumes:
-      - .:/app/balder
-    tty: true
-    ports:
-      - 9000:9000
-    links: 
-      - database
+  # crawler:
+  #   build: .
+  #   volumes:
+  #     - .:/app/balder
+  #   tty: true
+  #   ports:
+  #     - 9000:9000
+  #   links: 
+  #     - mongo

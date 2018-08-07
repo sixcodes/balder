@@ -1,44 +1,32 @@
 import asyncio
-import json
-from worker import book_worker
+from book_fetcher import fetch_book
 from file_reader import get_isbn_list_from_file
+from motor.motor_asyncio import AsyncIOMotorClient
 
 BASE_URL = 'https://www.googleapis.com/books/v1/volumes?q=isbn:{}'
-CONCURRENT_DOWNLOADS = 2
+client = AsyncIOMotorClient('mongodb://localhost:27017')
+mongo = client.balder
 
-queue = asyncio.Queue()
-
-results = {
-    'downloaded': [],
-    'not_founds': [],
-}
+# Total de livros 208666
 
 
 async def split_in_lines():
-    book_file = await get_isbn_list_from_file('isbn_list.txt')
+    book_file = await get_isbn_list_from_file('isbn_list-copy.txt')
     return book_file.splitlines()
 
 
-async def get_download_results(isbn, results, index, sem, queue=queue):
-    print('start downloading {} number {}'.format(isbn, index))
+async def get_download_results(isbn, index, sem, mongo=mongo):
     async with sem:
-        book = await book_worker(BASE_URL, isbn)
+        print('start downloading {} number {}'.format(isbn, index))
+        book = await fetch_book(BASE_URL, isbn)
         if 'error' not in book:
-            results['downloaded'].append(book)
-            queue.put({'downloaded': book})
-            print(book['title'])
+            try:
+                await mongo.books.insert_one(book)
+                print('========================>{}'.format(book['title']))
+            except Exception as e:
+                print('Book cannot be saved')
         else:
-            results['not_founds'].append(isbn)
-            queue.put({'not_found': isbn})
             print(book['error'])
-
-
-async def write_results(queue=queue):
-    while True:
-        book = await queue.get()
-
-        if 'downloaded' in book:
-            write_book_found_result(book)
 
 
 async def main():
@@ -49,22 +37,19 @@ async def main():
 
     print('total of books {}'.format(len(isbn_list)))
 
-    consumer = asyncio.ensure_future(write_results())
-
-    sem = asyncio.Semaphore(CONCURRENT_DOWNLOADS)
+    sem = asyncio.Semaphore(20)
 
     asyncio.gather(
         *(
-            get_download_results(isbn, results, index, sem)
+            get_download_results(isbn, index, sem)
             for index, isbn in enumerate(isbn_list)
         )
     )
 
-    await queue.join()
-    consumer.cancel()
-
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.Task(main())
+    loop.run_forever()
+    print("Pending tasks at exit: %s" % asyncio.Task.all_tasks(loop))
     loop.close()
