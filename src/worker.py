@@ -33,7 +33,7 @@ async def fetch_book_found(http_session, url):
 
 async def search_for_isbn(http_session, url, isbn):
     data, status = await fetch(http_session, url.format(isbn))
-    return data['items'][0] if data['totalItems'] > 0 else False
+    return data['items'][0] if status == 200 and data['totalItems'] > 0 else False
 
 
 async def book_worker(url, isbn, aiohttp=aiohttp):
